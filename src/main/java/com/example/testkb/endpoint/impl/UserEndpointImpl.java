@@ -1,71 +1,63 @@
 package com.example.testkb.endpoint.impl;
 
-import com.example.testkb.config.security.JWTTokenProvider;
+import com.example.testkb.config.security.CurrentUser;
+import com.example.testkb.config.security.UserPrincipal;
 import com.example.testkb.dto.request.PasswordUpdateRequest;
 import com.example.testkb.dto.request.UserCreateRequest;
-import com.example.testkb.dto.request.SignInRequest;
-import com.example.testkb.dto.response.JWTAuthenticationResponse;
 import com.example.testkb.dto.response.UserView;
 import com.example.testkb.endpoint.UserEndpoint;
+import com.example.testkb.entity.Bank;
 import com.example.testkb.entity.Role;
 import com.example.testkb.entity.User;
+import com.example.testkb.entity.enums.RoleName;
 import com.example.testkb.mapper.UserViewMapper;
-import com.example.testkb.service.AuthService;
+import com.example.testkb.service.BankService;
+import com.example.testkb.service.RoleService;
 import com.example.testkb.service.UserService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Set;
 
 @Service
 public class UserEndpointImpl implements UserEndpoint {
 
     private final UserService userService;
-    private final AuthService authService;
-    private final JWTTokenProvider jwtTokenProvider;
     private final UserViewMapper userViewMapper;
+    private final RoleService roleService;
+    private final BankService bankService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserEndpointImpl(UserService userService,
-                            AuthService authService,
-                            JWTTokenProvider jwtTokenProvider,
-                            UserViewMapper userViewMapper) {
+                            UserViewMapper userViewMapper,
+                            RoleService roleService,
+                            BankService bankService,
+                            PasswordEncoder passwordEncoder) {
         this.userService = userService;
-        this.authService = authService;
-        this.jwtTokenProvider = jwtTokenProvider;
         this.userViewMapper = userViewMapper;
+        this.roleService = roleService;
+        this.bankService = bankService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     @Transactional
-    public UserView create(@NonNull UserCreateRequest request) {
-        return userViewMapper.toUserView(userService.create(request));
+    public UserView addCashier(@NonNull UserCreateRequest request) {
+        Bank bank = bankService.getById(request.getBankId());
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+        Role role = roleService.getByName(RoleName.ROLE_CASHIER);
+        User cashier = userService.create(request, bank, encodedPassword, role);
+
+        return userViewMapper.toUserView(cashier);
     }
 
     @Override
     @Transactional
-    public UserView updatePassword(@NonNull PasswordUpdateRequest request) {
-        return userViewMapper.toUserView(userService.changePassword(request));
-    }
+    public UserView updatePassword(@NonNull PasswordUpdateRequest request,
+                                   @CurrentUser UserPrincipal currentUser) {
 
-    @Override
-    @Transactional
-    public JWTAuthenticationResponse signIn(@NonNull SignInRequest request) {
-
-        User user = userService.getByUsername(request.getUsername());
-
-        Authentication authentication = authService.getAuthentication(request);
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String jwt = jwtTokenProvider.generateToken(authentication);
-
-        Set<Role> roles = user.getRoles();
-
-        return new JWTAuthenticationResponse(jwt, roles);
+        return userViewMapper.toUserView(userService.changePassword(request, currentUser));
     }
 }

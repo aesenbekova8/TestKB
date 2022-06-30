@@ -2,7 +2,6 @@ package com.example.testkb.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -11,7 +10,6 @@ import java.util.Set;
 
 @Getter
 @Setter
-@NoArgsConstructor
 
 @Entity
 @Table(name = "banks")
@@ -30,14 +28,4 @@ public class Bank {
     @OneToMany(mappedBy = "bank", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<User> cashiers = new HashSet<>();
-
-    @OneToMany(mappedBy = "senderBank", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private Set<Transaction> transactions = new HashSet<>();
-
-    public Bank(Long id,
-                String name) {
-        this.id = id;
-        this.name = name;
-    }
 }
