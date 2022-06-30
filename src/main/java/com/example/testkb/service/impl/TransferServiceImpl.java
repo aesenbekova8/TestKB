@@ -2,14 +2,12 @@ package com.example.testkb.service.impl;
 
 import com.example.testkb.dto.request.TransferMoneyRequest;
 import com.example.testkb.entity.Bank;
-import com.example.testkb.entity.Transaction;
+import com.example.testkb.entity.Transfer;
 import com.example.testkb.entity.User;
 import com.example.testkb.entity.enums.TransferStatus;
 import com.example.testkb.exception.LogicException;
 import com.example.testkb.repository.TransferRepository;
-import com.example.testkb.service.BankService;
 import com.example.testkb.service.TransferService;
-import com.example.testkb.service.UserService;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,50 +18,41 @@ import java.util.Optional;
 public class TransferServiceImpl implements TransferService {
 
     private final TransferRepository transferRepository;
-    private final BankService bankService;
-    private final UserService userService;
 
-    public TransferServiceImpl(TransferRepository transferRepository,
-                               BankService bankService,
-                               UserService userService) {
+    public TransferServiceImpl(TransferRepository transferRepository) {
         this.transferRepository = transferRepository;
-        this.bankService = bankService;
-        this.userService = userService;
     }
 
     @Override
     @Transactional
-    public Transaction save(@NonNull Transaction transaction) {
-        return transferRepository.save(transaction);
+    public Transfer save(@NonNull Transfer transfer) {
+        return transferRepository.save(transfer);
     }
 
     @Override
     @Transactional
-    public Transaction transfer(@NonNull TransferMoneyRequest request) {
+    public Transfer create(@NonNull TransferMoneyRequest request,
+                           @NonNull User cashier,
+                           @NonNull Bank receiverBank) {
 
-        Bank receiverBank = bankService.getById(request.getReceiverBankId());
-        User cashier = userService.getById(request.getCashierId());
+        Transfer transfer = new Transfer();
+        transfer.setSenderINN(request.getSenderINN());
+        transfer.setReceiverINN(request.getReceiverINN());
+        transfer.setCurrency(request.getCurrency());
+        transfer.setSum(request.getSum());
+        transfer.generateCode();
+        transfer.setCashier(cashier);
+        transfer.setSenderBank(cashier.getBank());
+        transfer.setReceiverBank(receiverBank);
 
-        Transaction transaction = new Transaction();
-        transaction.setSenderINN(request.getSenderINN());
-        transaction.setReceiverINN(request.getReceiverINN());
-        transaction.setCurrency(request.getCurrency());
-        transaction.setSum(request.getSum());
-        transaction.generateCode();
-        transaction.setCashier(cashier);
-        transaction.setSenderBank(cashier.getBank());
-        transaction.setReceiverBank(receiverBank);
-
-        bankService.transferMoney(receiverBank, request.getCurrency(), request.getSum());
-
-        return transferRepository.save(transaction);
+        return transferRepository.save(transfer);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Transaction getActive(@NonNull TransferStatus status,
-                                 @NonNull String code) {
-        return Optional.of(transferRepository.getByStatusAndCode(status, code))
+    public Transfer getActive(@NonNull TransferStatus status,
+                              @NonNull String code) {
+        return Optional.of(transferRepository.findByStatusAndCode(status, code))
                 .orElseThrow(() -> new LogicException(String.format("There are no active transfers with code: %s", code)));
     }
 }

@@ -6,5 +6,4 @@ import lombok.Data;
 public class TransferGetRequest {
     private String receiverINN;
     private String transferCode;
-    private Long bankId;
 }

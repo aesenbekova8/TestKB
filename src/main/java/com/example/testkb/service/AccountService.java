@@ -10,4 +10,5 @@ public interface AccountService {
     Account create();
     void replenish(Bank bank, Currency currency, BigDecimal sum);
     void debit(Bank bank, Currency currency, BigDecimal sum);
+    Account getByBankAndCurrency(Bank bank, Currency currency);
 }

@@ -1,6 +1,5 @@
 package com.example.testkb.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -33,10 +32,6 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
-
-    @OneToMany(mappedBy = "cashier", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private Set<Transaction> transactions = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "bank_id")

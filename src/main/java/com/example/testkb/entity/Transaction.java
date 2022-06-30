@@ -1,7 +1,7 @@
 package com.example.testkb.entity;
 
 import com.example.testkb.entity.enums.Currency;
-import com.example.testkb.entity.enums.TransferStatus;
+import com.example.testkb.entity.enums.TransactionType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,44 +20,24 @@ public class Transaction {
     private Long id;
 
     @NotBlank
-    @Column(name = "sender_inn")
-    private String senderINN;
+    @Column(name = "start_balance")
+    private BigDecimal startBalance = BigDecimal.ZERO;
+
+    @Column(name = "withdrawal")
+    private BigDecimal withdrawal = BigDecimal.ZERO;
+
+    @Column(name = "deposit")
+    private BigDecimal deposit = BigDecimal.ZERO;
 
     @NotBlank
-    @Column(name = "receiver_inn")
-    private String receiverINN;
+    @Column(name = "final_balance")
+    private BigDecimal finalBalance = BigDecimal.ZERO;
 
     @NotBlank
-    @Enumerated(EnumType.STRING)
-    @Column(name = "currency")
-    private Currency currency;
-
-    @NotBlank
-    @Column(name = "transfer_sum")
-    private BigDecimal sum = BigDecimal.ZERO;
-
-    @NotBlank
-    @Column(name = "code")
-    private String code;
+    @Column(name = "comment")
+    private String comment;
 
     @ManyToOne
-    @JoinColumn(name = "cashier_id")
-    private User cashier;
-
-    @ManyToOne
-    @JoinColumn(name = "sender_bank_id")
-    private Bank senderBank;
-
-    @ManyToOne
-    @JoinColumn(name = "receiver_bank_id")
-    private Bank receiverBank;
-
-    @Enumerated(value = EnumType.STRING)
-    @Column(name = "status")
-    private TransferStatus status = TransferStatus.ACTIVE;
-
-    public void generateCode() {
-        String code = String.valueOf(hashCode());
-        setCode(code);
-    }
+    @JoinColumn(name = "account_id")
+    private Account account;
 }

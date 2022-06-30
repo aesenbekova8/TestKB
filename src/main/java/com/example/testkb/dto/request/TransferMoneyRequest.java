@@ -11,6 +11,5 @@ public class TransferMoneyRequest {
     private String receiverINN;
     private Currency currency;
     private BigDecimal sum;
-    private Long cashierId;
     private Long receiverBankId;
 }
