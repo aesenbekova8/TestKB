@@ -50,9 +50,8 @@ public class TransferServiceImpl implements TransferService {
 
     @Override
     @Transactional(readOnly = true)
-    public Transfer getActive(@NonNull TransferStatus status,
-                              @NonNull String code) {
-        return Optional.of(transferRepository.findByStatusAndCode(status, code))
+    public Transfer getActiveByCode(@NonNull String code) {
+        return Optional.of(transferRepository.findByStatusAndCode(TransferStatus.ACTIVE, code))
                 .orElseThrow(() -> new LogicException(String.format("There are no active transfers with code: %s", code)));
     }
 }

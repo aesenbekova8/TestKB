@@ -1,8 +1,12 @@
 package com.example.testkb.dto.request;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
 public class TransferGetRequest {
     private String receiverINN;
     private String transferCode;

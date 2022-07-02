@@ -36,10 +36,10 @@ INSERT INTO users (username, password, bank_id)
 VALUES ('Cashier1', '$2a$04$.z4Wzip1.NiUJdm0O9DrteVps7rHa04G7xnnKagVqXzsSplV8mbU2', 1);
 
 INSERT INTO user_role(user_id, role_id)
-VALUES (1, 1);
+VALUES (2, 1);
 
 INSERT INTO users (username, password, bank_id)
 VALUES ('Cashier2', '$2a$04$.z4Wzip1.NiUJdm0O9DrteVps7rHa04G7xnnKagVqXzsSplV8mbU2', 2);
 
 INSERT INTO user_role(user_id, role_id)
-VALUES (1, 1);
+VALUES (3, 1);

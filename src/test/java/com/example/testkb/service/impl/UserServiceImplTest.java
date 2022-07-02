@@ -4,6 +4,7 @@ import com.example.testkb.entity.Bank;
 import com.example.testkb.entity.Role;
 import com.example.testkb.entity.User;
 import com.example.testkb.entity.enums.RoleName;
+import com.example.testkb.exception.LogicException;
 import com.example.testkb.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.Collections;
 import java.util.Optional;
 
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @RunWith(SpringRunner.class)
@@ -45,7 +47,15 @@ class UserServiceImplTest {
     @Test
     void create_withNotExistsUsername() {
         userService.create(user);
+        Mockito.verify(userRepository, Mockito.times(1)).existsByUsername(user.getUsername());
         Mockito.verify(userRepository, Mockito.times(1)).save(user);
+    }
+
+    @Test
+    void create_withExistsUsername() {
+        userService.create(user);
+        Mockito.doThrow(new LogicException(format("User with username: %s has existed yet", user.getUsername())))
+                .when(userRepository).existsByUsername(user.getUsername());
     }
 
     @Test

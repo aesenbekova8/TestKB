@@ -63,7 +63,7 @@ public class TransferEndpointImpl implements TransferEndpoint {
     @Transactional
     public void getTransfer(@NonNull TransferGetRequest request,
                             @CurrentUser UserPrincipal currentUser) {
-        Transfer transfer = transferService.getActive(TransferStatus.ACTIVE, request.getTransferCode());
+        Transfer transfer = transferService.getActiveByCode(request.getTransferCode());
         Bank bank = transfer.getReceiverBank();
         Account account = accountService.getByBankAndCurrency(bank, transfer.getCurrency());
         BigDecimal startAccountBalance = account.getBalance();

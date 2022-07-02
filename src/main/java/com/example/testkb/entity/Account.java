@@ -39,6 +39,13 @@ public class Account {
     @JsonIgnore
     private Set<Transaction> transactions = new HashSet<>();
 
+    public Account(Long id, BigDecimal balance, Currency currency, Bank bank) {
+        this.id = id;
+        this.balance = balance;
+        this.currency = currency;
+        this.bank = bank;
+    }
+
     public void replenish(BigDecimal sum) {
         setBalance(this.balance.add(sum));
     }

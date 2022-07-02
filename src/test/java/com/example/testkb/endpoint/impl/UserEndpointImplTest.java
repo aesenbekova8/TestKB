@@ -40,9 +40,12 @@ class UserEndpointImplTest {
     private BankService bankService;
     @MockBean
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoderBean;
 
     private Bank bank;
     private String password;
+    private String encodedPassword;
     private Role role;
     private User user;
 
@@ -50,11 +53,12 @@ class UserEndpointImplTest {
     public void setup() {
         bank = new Bank(1L, "Some bank");
         password = "123456";
+        encodedPassword = passwordEncoderBean.encode(password);
         role = new Role(1L, RoleName.ROLE_CASHIER);
         user = new User(
-                1L,
-                "admin",
-                password,
+                2L,
+                "Cashier1",
+                encodedPassword,
                 Collections.singleton(role),
                 bank);
     }
@@ -62,16 +66,22 @@ class UserEndpointImplTest {
     @Test
     void addCashier() {
         userEndpoint.addCashier(new UserCreateRequest(user.getUsername(), user.getPassword(), bank.getId()));
-        Mockito.verify(bankService, Mockito.times(1)).getById(1L);
+        Mockito.verify(bankService, Mockito.times(1)).getById(bank.getId());
         Mockito.verify(passwordEncoder, Mockito.times(1)).encode(password);
         Mockito.verify(roleService, Mockito.times(1)).getByName(role.getName());
-//        Mockito.verify(userService, Mockito.times(1)).create(user);
-//        Mockito.verify(userViewMapper, Mockito.times(1)).toUserView(user);
+
+        User cashier = userService.create(new User(
+                user.getUsername(),
+                encodedPassword,
+                Collections.singleton(role),
+                bank));
+
+        Mockito.verify(userViewMapper, Mockito.times(1)).toUserView(cashier);
     }
 
     @Test
     void updatePassword() {
-        userEndpoint.updatePassword(new PasswordUpdateRequest("123456", "654321"), new UserPrincipal(1L));
+        userEndpoint.updatePassword(new PasswordUpdateRequest("123456", "654321"), new UserPrincipal(2L));
         Mockito.verify(userService, Mockito.times(1)).getById(user.getId());
     }
 }
