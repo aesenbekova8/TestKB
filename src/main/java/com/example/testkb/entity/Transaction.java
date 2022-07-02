@@ -1,7 +1,5 @@
 package com.example.testkb.entity;
 
-import com.example.testkb.entity.enums.Currency;
-import com.example.testkb.entity.enums.TransactionType;
 import lombok.Getter;
 import lombok.Setter;
 
