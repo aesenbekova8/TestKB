@@ -32,7 +32,7 @@ CREATE TABLE transactions(
      start_balance NUMERIC(10, 4),
      withdrawal NUMERIC(10, 4),
      deposit NUMERIC(10, 4),
-     final_balance VARCHAR(50),
+     final_balance NUMERIC(10, 4),
      comment VARCHAR(255) NOT NULL,
      account_id BIGSERIAL REFERENCES accounts(id)
 );

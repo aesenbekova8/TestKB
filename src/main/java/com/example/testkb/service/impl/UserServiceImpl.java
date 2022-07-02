@@ -1,11 +1,5 @@
 package com.example.testkb.service.impl;
 
-import com.example.testkb.config.security.CurrentUser;
-import com.example.testkb.config.security.UserPrincipal;
-import com.example.testkb.dto.request.PasswordUpdateRequest;
-import com.example.testkb.dto.request.UserCreateRequest;
-import com.example.testkb.entity.Bank;
-import com.example.testkb.entity.Role;
 import com.example.testkb.entity.User;
 import com.example.testkb.exception.LogicException;
 import com.example.testkb.repository.UserRepository;
@@ -16,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Collections;
 import java.util.Optional;
 
 import static java.lang.String.format;
@@ -33,36 +26,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User create(@NonNull UserCreateRequest request,
-                       @NonNull Bank bank,
-                       @NonNull String encodedPassword,
-                       @NonNull Role role) {
-
-        if (userRepository.existsByUsername(request.getUsername())) {
-            throw new LogicException(format("User with username: %s has existed yet", request.getUsername()));
+    public User create(User user) {
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new LogicException(format("User with username: %s has existed yet", user.getUsername()));
         }
-
-        User user = new User();
-        user.setUsername(request.getUsername());
-        user.setPassword(encodedPassword);
-        user.setBank(bank);
-        user.setRoles(Collections.singleton(role));
 
         return userRepository.save(user);
     }
 
     @Override
     @Transactional
-    public User changePassword(@NonNull PasswordUpdateRequest request,
-                               @CurrentUser UserPrincipal currentUser) {
-        User user = userRepository.getReferenceById(currentUser.getId());
-        user.setPassword(request.getNewPassword());
-
+    public User changePassword(User user, String newPassword) {
+        user.setPassword(newPassword);
         return userRepository.save(user);
     }
 
     @Override
-    public User getById(Long id) {
+    @Transactional(readOnly = true)
+    public User getById(@NonNull Long id) {
         return Optional.of(userRepository.getReferenceById(id)).
                 orElseThrow(() -> new EntityNotFoundException(format("User with id: %s not found", id)));
     }

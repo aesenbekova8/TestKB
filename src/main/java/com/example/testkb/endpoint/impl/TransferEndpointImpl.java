@@ -59,7 +59,6 @@ public class TransferEndpointImpl implements TransferEndpoint {
         return transferMapper.toTransferResponse(transfer.getCode());
     }
 
-    //delete current user
     @Override
     @Transactional
     public void getTransfer(@NonNull TransferGetRequest request,

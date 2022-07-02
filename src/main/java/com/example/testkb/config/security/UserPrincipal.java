@@ -33,6 +33,10 @@ public class UserPrincipal implements UserDetails {
         this.authorities = authorities;
     }
 
+    public UserPrincipal(Long id) {
+        this.id = id;
+    }
+
     public static UserPrincipal create(User user) {
         List<GrantedAuthority> authorities = user.getRoles().stream().map(role ->
                 new SimpleGrantedAuthority(role.getName().name())

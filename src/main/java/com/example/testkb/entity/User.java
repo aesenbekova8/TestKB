@@ -1,6 +1,8 @@
 package com.example.testkb.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -11,6 +13,8 @@ import java.util.Set;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 
 @Entity
 @Table(name = "users")
@@ -37,4 +41,23 @@ public class User {
     @JoinColumn(name = "bank_id")
     private Bank bank;
 
+    public User(String username,
+                String password,
+                Set<Role> roles,
+                Bank bank) {
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+        this.bank = bank;
+    }
+
+    public User(Long id,
+                String password,
+                Set<Role> roles,
+                Bank bank) {
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+        this.bank = bank;
+    }
 }

@@ -20,6 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+
 @Service
 public class UserEndpointImpl implements UserEndpoint {
 
@@ -48,7 +50,12 @@ public class UserEndpointImpl implements UserEndpoint {
         Bank bank = bankService.getById(request.getBankId());
         String encodedPassword = passwordEncoder.encode(request.getPassword());
         Role role = roleService.getByName(RoleName.ROLE_CASHIER);
-        User cashier = userService.create(request, bank, encodedPassword, role);
+
+        User cashier = userService.create(new User(
+                request.getUsername(),
+                encodedPassword,
+                Collections.singleton(role),
+                bank));
 
         return userViewMapper.toUserView(cashier);
     }
@@ -57,7 +64,7 @@ public class UserEndpointImpl implements UserEndpoint {
     @Transactional
     public UserView updatePassword(@NonNull PasswordUpdateRequest request,
                                    @CurrentUser UserPrincipal currentUser) {
-
-        return userViewMapper.toUserView(userService.changePassword(request, currentUser));
+        User user = userService.getById(currentUser.getId());
+        return userViewMapper.toUserView(userService.changePassword(user, request.getNewPassword()));
     }
 }
