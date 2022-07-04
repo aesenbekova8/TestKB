@@ -13,5 +13,6 @@ public class TransferResponse {
     private String receiverINN;
     private Currency currency;
     private BigDecimal sum;
+    private BigDecimal commission;
     private String code;
 }

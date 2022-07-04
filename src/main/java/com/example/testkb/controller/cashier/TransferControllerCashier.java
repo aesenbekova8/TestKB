@@ -4,6 +4,7 @@ import com.example.testkb.config.security.CurrentUser;
 import com.example.testkb.config.security.UserPrincipal;
 import com.example.testkb.dto.request.TransferGetRequest;
 import com.example.testkb.dto.request.TransferMoneyRequest;
+import com.example.testkb.dto.response.TransferReport;
 import com.example.testkb.dto.response.TransferResponse;
 import com.example.testkb.endpoint.TransferEndpoint;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +29,13 @@ public class TransferControllerCashier {
     }
 
     @PostMapping("/cash-out-transfer")
-    public void cashOutTransfer(@RequestBody TransferGetRequest request,
+    public ResponseEntity<TransferResponse> cashOutTransfer(@RequestBody TransferGetRequest request,
                                 @CurrentUser UserPrincipal currentUSer) {
-        transferEndpoint.getTransfer(request, currentUSer);
+        return ResponseEntity.ok(transferEndpoint.getTransfer(request, currentUSer));
+    }
+
+    @GetMapping("/report")
+    public ResponseEntity<TransferReport> getReport(@CurrentUser UserPrincipal currentUser) {
+        return ResponseEntity.ok(transferEndpoint.getReport(currentUser));
     }
 }

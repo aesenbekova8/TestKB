@@ -13,6 +13,7 @@ public class TransferMapper {
                 .receiverINN(transfer.getReceiverINN())
                 .currency(transfer.getCurrency())
                 .sum(transfer.getSum())
+                .commission(transfer.getCommission())
                 .code(transfer.getCode())
                 .build();
     }

@@ -4,6 +4,7 @@ import com.example.testkb.config.security.CurrentUser;
 import com.example.testkb.config.security.UserPrincipal;
 import com.example.testkb.dto.request.TransferGetRequest;
 import com.example.testkb.dto.request.TransferMoneyRequest;
+import com.example.testkb.dto.response.TransferReport;
 import com.example.testkb.dto.response.TransferResponse;
 import com.example.testkb.endpoint.TransferEndpoint;
 import com.example.testkb.entity.Account;
@@ -29,6 +30,8 @@ public class TransferEndpointImpl implements TransferEndpoint {
     private final UserService userService;
     private final TransferMapper transferMapper;
 
+    private final BigDecimal commission = new BigDecimal("0.01");
+
     public TransferEndpointImpl(BankService bankService,
                                 TransferService transferService,
                                 TransactionService transactionService,
@@ -49,7 +52,9 @@ public class TransferEndpointImpl implements TransferEndpoint {
                                      @CurrentUser UserPrincipal currentUser) {
         Bank receiverBank = bankService.getById(request.getReceiverBankId());
         User cashier = userService.getById(currentUser.getId());
-        Transfer transfer = transferService.create(request, cashier, receiverBank);
+
+        BigDecimal commission = calculateCommission(request.getSum());
+        Transfer transfer = transferService.create(request, cashier, receiverBank, commission);
         Account account = accountService.getByBankAndCurrency(receiverBank, request.getCurrency());
         BigDecimal startAccountBalance = account.getBalance();
 
@@ -61,8 +66,8 @@ public class TransferEndpointImpl implements TransferEndpoint {
 
     @Override
     @Transactional
-    public void getTransfer(@NonNull TransferGetRequest request,
-                            @CurrentUser UserPrincipal currentUser) {
+    public TransferResponse getTransfer(@NonNull TransferGetRequest request,
+                                        @CurrentUser UserPrincipal currentUser) {
         Transfer transfer = transferService.getActive(TransferStatus.NOT_CASHED, request.getTransferCode(), request.getReceiverINN());
         Bank bank = transfer.getReceiverBank();
         Account account = accountService.getByBankAndCurrency(bank, transfer.getCurrency());
@@ -72,5 +77,22 @@ public class TransferEndpointImpl implements TransferEndpoint {
         transfer.setStatus(TransferStatus.CASHED);
         transferService.save(transfer);
         transactionService.cashOutTransfer(account, startAccountBalance, transfer.getSum());
+
+        return transferMapper.toTransferResponse(transfer);
+    }
+
+    @Override
+    public TransferReport getReport(@CurrentUser UserPrincipal currentUser) {
+        User cashier = userService.getById(currentUser.getId());
+        Bank bank = bankService.getById(cashier.getBank().getId());
+        TransferReport report = new TransferReport();
+        report.setProfit(transferService.getTotalSumOfCommissions(bank));
+        report.setTransfer(transferService.getTotalSumOfTransfers(bank));
+
+        return report;
+    }
+
+    private BigDecimal calculateCommission(BigDecimal sum) {
+        return sum.multiply(commission);
     }
 }

@@ -3,11 +3,6 @@ CREATE TABLE banks(
     name VARCHAR(50)
 );
 
-CREATE TABLE cash_desks(
-    id BIGSERIAL PRIMARY KEY,
-    bank_id BIGSERIAL REFERENCES banks(id)
-);
-
 CREATE TABLE accounts(
     id BIGSERIAL PRIMARY KEY,
     currency VARCHAR(10),
@@ -39,7 +34,8 @@ CREATE TABLE transactions(
      deposit NUMERIC(10, 4),
      final_balance VARCHAR(50),
      comment VARCHAR(255) NOT NULL,
-     account_id BIGSERIAL REFERENCES accounts(id)
+     account_id BIGSERIAL REFERENCES accounts(id),
+     created_date_time TIMESTAMP
 );
 
 CREATE TABLE transfers(
@@ -48,18 +44,11 @@ CREATE TABLE transfers(
      receiver_inn VARCHAR(50),
      currency VARCHAR(10),
      sum NUMERIC(10, 4),
+     commission NUMERIC(10, 4),
      code VARCHAR(50),
      cashier_id BIGSERIAL REFERENCES users(id),
      sender_bank_id BIGSERIAL REFERENCES banks(id),
      receiver_bank_id BIGSERIAL REFERENCES banks(id),
-     status VARCHAR(10) NOT NULL
-);
-
-CREATE TABLE shifts(
-     id BIGSERIAL PRIMARY KEY,
-     cashier_id BIGSERIAL REFERENCES users(id),
-     cash_desk_id BIGSERIAL REFERENCES cash_desks(id),
-     start_time TIMESTAMP,
-     end_time TIMESTAMP,
-     status VARCHAR(10) NOT NULL
+     status VARCHAR(10) NOT NULL,
+     created_date_time TIMESTAMP
 );
