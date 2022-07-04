@@ -13,6 +13,7 @@ import java.util.Optional;
 import static java.lang.String.format;
 
 @Service
+@Transactional(readOnly = true)
 public class BankServiceImpl implements BankService {
 
     private final BankRepository bankRepository;
@@ -22,7 +23,6 @@ public class BankServiceImpl implements BankService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Bank getById(@NonNull Long id) {
         return Optional.of(bankRepository.getReferenceById(id))
                 .orElseThrow(() -> new EntityNotFoundException(format("Bank with id: %s ", id)));

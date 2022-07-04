@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
 public class TransferServiceImpl implements TransferService {
 
     private final TransferRepository transferRepository;
@@ -49,10 +50,10 @@ public class TransferServiceImpl implements TransferService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Transfer getActive(@NonNull TransferStatus status,
-                              @NonNull String code) {
-        return Optional.of(transferRepository.findByStatusAndCode(status, code))
+                              @NonNull String code,
+                              @NonNull String receiverINN) {
+        return Optional.of(transferRepository.findByStatusAndCodeAndReceiverINN(status, code, receiverINN))
                 .orElseThrow(() -> new LogicException(String.format("There are no active transfers with code: %s", code)));
     }
 }

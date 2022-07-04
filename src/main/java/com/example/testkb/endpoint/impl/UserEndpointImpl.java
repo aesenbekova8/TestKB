@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class UserEndpointImpl implements UserEndpoint {
 
     private final UserService userService;
@@ -44,8 +45,10 @@ public class UserEndpointImpl implements UserEndpoint {
 
     @Override
     @Transactional
-    public UserView addCashier(@NonNull UserCreateRequest request) {
-        Bank bank = bankService.getById(request.getBankId());
+    public UserView addCashier(@NonNull UserCreateRequest request,
+                               @CurrentUser UserPrincipal currentUser) {
+        User admin = userService.getById(currentUser.getId());
+        Bank bank = bankService.getById(admin.getBank().getId());
         String encodedPassword = passwordEncoder.encode(request.getPassword());
         Role role = roleService.getByName(RoleName.ROLE_CASHIER);
         User cashier = userService.create(request, bank, encodedPassword, role);
@@ -57,7 +60,6 @@ public class UserEndpointImpl implements UserEndpoint {
     @Transactional
     public UserView updatePassword(@NonNull PasswordUpdateRequest request,
                                    @CurrentUser UserPrincipal currentUser) {
-
         return userViewMapper.toUserView(userService.changePassword(request, currentUser));
     }
 }

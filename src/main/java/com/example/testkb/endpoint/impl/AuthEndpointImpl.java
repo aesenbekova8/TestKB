@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Set;
 
 @Service
+@Transactional(readOnly = true)
 public class AuthEndpointImpl implements AuthEndpoint {
 
     private final UserService userService;

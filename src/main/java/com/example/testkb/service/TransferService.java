@@ -9,5 +9,5 @@ import com.example.testkb.entity.enums.TransferStatus;
 public interface TransferService {
     Transfer save(Transfer transfer);
     Transfer create(TransferMoneyRequest request, User cashier, Bank receiverBank);
-    Transfer getActive(TransferStatus status, String code);
+    Transfer getActive(TransferStatus status, String code, String receiverINN);
 }

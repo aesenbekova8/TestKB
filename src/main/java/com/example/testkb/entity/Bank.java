@@ -28,8 +28,4 @@ public class Bank {
     @OneToMany(mappedBy = "bank", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<User> cashiers = new HashSet<>();
-
-    @OneToMany(mappedBy = "bank", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private Set<CashDesk> cashDesks = new HashSet<>();
 }

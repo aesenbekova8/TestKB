@@ -54,7 +54,7 @@ public class Transfer {
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "status")
-    private TransferStatus status = TransferStatus.ACTIVE;
+    private TransferStatus status = TransferStatus.NOT_CASHED;
 
     public void generateCode() {
         String code = String.valueOf(hashCode());

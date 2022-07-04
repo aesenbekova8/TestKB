@@ -56,21 +56,20 @@ public class TransferEndpointImpl implements TransferEndpoint {
         accountService.replenish(receiverBank, request.getCurrency(), request.getSum());
         transactionService.transfer(account, startAccountBalance, request.getSum());
 
-        return transferMapper.toTransferResponse(transfer.getCode());
+        return transferMapper.toTransferResponse(transfer);
     }
 
-    //delete current user
     @Override
     @Transactional
     public void getTransfer(@NonNull TransferGetRequest request,
                             @CurrentUser UserPrincipal currentUser) {
-        Transfer transfer = transferService.getActive(TransferStatus.ACTIVE, request.getTransferCode());
+        Transfer transfer = transferService.getActive(TransferStatus.NOT_CASHED, request.getTransferCode(), request.getReceiverINN());
         Bank bank = transfer.getReceiverBank();
         Account account = accountService.getByBankAndCurrency(bank, transfer.getCurrency());
         BigDecimal startAccountBalance = account.getBalance();
 
         accountService.debit(bank, transfer.getCurrency(), transfer.getSum());
-        transfer.setStatus(TransferStatus.CASHED_OUT);
+        transfer.setStatus(TransferStatus.CASHED);
         transferService.save(transfer);
         transactionService.cashOutTransfer(account, startAccountBalance, transfer.getSum());
     }

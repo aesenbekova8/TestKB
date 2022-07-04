@@ -1,5 +1,7 @@
 package com.example.testkb.controller.admin;
 
+import com.example.testkb.config.security.CurrentUser;
+import com.example.testkb.config.security.UserPrincipal;
 import com.example.testkb.dto.request.UserCreateRequest;
 import com.example.testkb.dto.response.UserView;
 import com.example.testkb.endpoint.UserEndpoint;
@@ -19,7 +21,8 @@ public class UserControllerAdmin {
     }
 
     @PostMapping("/create-cashier")
-    public ResponseEntity<UserView> createCashier(@Valid @RequestBody UserCreateRequest request) {
-        return ResponseEntity.ok(userEndpoint.addCashier(request));
+    public ResponseEntity<UserView> createCashier(@Valid @RequestBody UserCreateRequest request,
+                                                  @CurrentUser UserPrincipal currentUser) {
+        return ResponseEntity.ok(userEndpoint.addCashier(request,currentUser ));
     }
 }

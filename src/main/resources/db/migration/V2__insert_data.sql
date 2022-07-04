@@ -1,8 +1,26 @@
 INSERT INTO banks(id, name)
 VALUES (1, 'Some bank');
 
+INSERT INTO cash_desks(id, bank_id)
+VALUES (1, 1);
+
+INSERT INTO cash_desks(id, bank_id)
+VALUES (2, 1);
+
+INSERT INTO cash_desks(id, bank_id)
+VALUES (3, 1);
+
 INSERT INTO banks(id, name)
 VALUES (2, 'Another bank');
+
+INSERT INTO cash_desks(id, bank_id)
+VALUES (4, 2);
+
+INSERT INTO cash_desks(id, bank_id)
+VALUES (5, 2);
+
+INSERT INTO cash_desks(id, bank_id)
+VALUES (6, 2);
 
 INSERT INTO accounts(id, currency, balance, bank_id)
 VALUES (1, 'SOM', 0, 1);

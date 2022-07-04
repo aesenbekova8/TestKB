@@ -13,6 +13,7 @@ import javax.persistence.EntityNotFoundException;
 import static java.lang.String.format;
 
 @Service
+@Transactional(readOnly = true)
 public class RoleServiceImpl implements RoleService {
 
     private final RoleRepository roleRepository;
@@ -22,13 +23,11 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Role getById(@NonNull Long id) {
         return roleRepository.getById(id);
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Role getByName(@NonNull RoleName name) {
         return roleRepository.findByName(RoleName.ROLE_CASHIER)
                 .orElseThrow(() -> new EntityNotFoundException(format("Role: %s not found", RoleName.ROLE_CASHIER)));
