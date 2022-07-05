@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -28,8 +29,9 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setStartBalance(startBalance);
         transaction.setDeposit(debit);
         transaction.setFinalBalance(account.getBalance());
-        transaction.setComment(String.format("A transfer was made in the amount of %s %s", debit, account.getCurrency()));
+        transaction.setComment(String.format("A transfer was made in the amount of %s %s ", debit, account.getCurrency()));
         transaction.setAccount(account);
+        transaction.setCreatedDateTime(LocalDateTime.now());
 
         return transactionRepository.save(transaction);
     }
@@ -45,6 +47,7 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setFinalBalance(account.getBalance());
         transaction.setComment(String.format("A transfer was withdrawn of %s %s", withdrawal, account.getCurrency()));
         transaction.setAccount(account);
+        transaction.setCreatedDateTime(LocalDateTime.now());
 
         return transactionRepository.save(transaction);
     }

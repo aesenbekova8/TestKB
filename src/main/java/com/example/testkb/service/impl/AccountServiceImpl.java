@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
@@ -33,7 +34,7 @@ public class AccountServiceImpl implements AccountService {
     public void replenish(@NonNull Bank bank,
                           @NonNull Currency currency,
                           @NonNull BigDecimal sum) {
-        Account account = accountRepository.findAccountByBankAndCurrency(bank, currency);
+        Account account = getByBankAndCurrency(bank, currency);
         account.replenish(sum);
         accountRepository.save(account);
     }
@@ -43,7 +44,7 @@ public class AccountServiceImpl implements AccountService {
     public void debit(@NonNull Bank bank,
                       @NonNull Currency currency,
                       @NonNull BigDecimal sum) {
-        Account account = accountRepository.findAccountByBankAndCurrency(bank, currency);
+        Account account = getByBankAndCurrency(bank, currency);
 
         if (account.getBalance().subtract(sum).signum() < 0) {
             throw new LogicException("There are not enough funds on the Account with id: " + account.getId());
@@ -54,7 +55,6 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Account getByBankAndCurrency(@NonNull Bank bank,
                                         @NonNull Currency currency) {
         return Optional.of(accountRepository.findAccountByBankAndCurrency(bank, currency))

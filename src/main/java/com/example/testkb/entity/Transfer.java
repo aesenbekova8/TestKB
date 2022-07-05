@@ -10,6 +10,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -41,6 +42,10 @@ public class Transfer {
     private BigDecimal sum = BigDecimal.ZERO;
 
     @NotBlank
+    @Column(name = "commission")
+    private BigDecimal commission = new BigDecimal(0);
+
+    @NotBlank
     @Column(name = "code")
     private String code;
 
@@ -58,7 +63,10 @@ public class Transfer {
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "status")
-    private TransferStatus status = TransferStatus.ACTIVE;
+    private TransferStatus status = TransferStatus.NOT_CASHED;
+
+    @Column(name = "created_date_time")
+    private LocalDateTime createdDateTime;
 
     public void generateCode() {
         String code = String.valueOf(hashCode());

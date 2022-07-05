@@ -15,6 +15,7 @@ import java.util.Optional;
 import static java.lang.String.format;
 
 @Service
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -49,7 +50,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public User getByUsername(@NonNull String username) {
         return userRepository
                 .findByUsername(username)

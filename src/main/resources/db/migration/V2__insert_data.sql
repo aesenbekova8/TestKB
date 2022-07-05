@@ -14,13 +14,19 @@ INSERT INTO accounts(id, currency, balance, bank_id)
 VALUES (3, 'USD', 0, 1);
 
 INSERT INTO accounts(id, currency, balance, bank_id)
-VALUES (4, 'SOM', 0, 2);
+VALUES (4, 'EUR', 0, 2);
 
 INSERT INTO accounts(id, currency, balance, bank_id)
-VALUES (5, 'RUB', 0, 2);
+VALUES (5, 'SOM', 0, 2);
 
 INSERT INTO accounts(id, currency, balance, bank_id)
-VALUES (6, 'USD', 0, 2);
+VALUES (6, 'RUB', 0, 2);
+
+INSERT INTO accounts(id, currency, balance, bank_id)
+VALUES (7, 'USD', 0, 2);
+
+INSERT INTO accounts(id, currency, balance, bank_id)
+VALUES (8, 'EUR', 0, 2);
 
 INSERT INTO roles(id, name)
 VALUES (1, 'ROLE_CASHIER'),

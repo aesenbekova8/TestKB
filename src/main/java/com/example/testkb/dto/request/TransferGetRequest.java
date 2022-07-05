@@ -1,13 +1,13 @@
 package com.example.testkb.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
-@AllArgsConstructor
+import javax.validation.constraints.NotBlank;
+
+@Data
 public class TransferGetRequest {
+    @NotBlank
     private String receiverINN;
+    @NotBlank
     private String transferCode;
 }

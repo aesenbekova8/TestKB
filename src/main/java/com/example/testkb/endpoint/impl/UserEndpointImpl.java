@@ -20,9 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-
 @Service
+@Transactional(readOnly = true)
 public class UserEndpointImpl implements UserEndpoint {
 
     private final UserService userService;
@@ -46,16 +45,13 @@ public class UserEndpointImpl implements UserEndpoint {
 
     @Override
     @Transactional
-    public UserView addCashier(@NonNull UserCreateRequest request) {
-        Bank bank = bankService.getById(request.getBankId());
+    public UserView addCashier(@NonNull UserCreateRequest request,
+                               @CurrentUser UserPrincipal currentUser) {
+        User admin = userService.getById(currentUser.getId());
+        Bank bank = bankService.getById(admin.getBank().getId());
         String encodedPassword = passwordEncoder.encode(request.getPassword());
         Role role = roleService.getByName(RoleName.ROLE_CASHIER);
-
-        User cashier = userService.create(new User(
-                request.getUsername(),
-                encodedPassword,
-                Collections.singleton(role),
-                bank));
+        User cashier = userService.create(request, bank, encodedPassword, role);
 
         return userViewMapper.toUserView(cashier);
     }
@@ -64,7 +60,6 @@ public class UserEndpointImpl implements UserEndpoint {
     @Transactional
     public UserView updatePassword(@NonNull PasswordUpdateRequest request,
                                    @CurrentUser UserPrincipal currentUser) {
-        User user = userService.getById(currentUser.getId());
-        return userViewMapper.toUserView(userService.changePassword(user, request.getNewPassword()));
+        return userViewMapper.toUserView(userService.changePassword(request, currentUser));
     }
 }
