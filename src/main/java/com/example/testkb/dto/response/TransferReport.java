@@ -8,6 +8,7 @@ import java.util.Map;
 
 @Data
 public class TransferReport {
-    Map<Currency, BigDecimal> profit;
-    Map<Currency, BigDecimal> transfer;
+    private Map<Currency, BigDecimal> profits;
+    private BigDecimal totalProfitInSOM;
+    private Map<Currency, BigDecimal> transfers;
 }

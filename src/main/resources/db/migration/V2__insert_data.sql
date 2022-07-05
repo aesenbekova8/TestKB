@@ -14,7 +14,7 @@ INSERT INTO accounts(id, currency, balance, bank_id)
 VALUES (3, 'USD', 0, 1);
 
 INSERT INTO accounts(id, currency, balance, bank_id)
-VALUES (4, 'EUR', 0, 2);
+VALUES (4, 'EUR', 0, 1);
 
 INSERT INTO accounts(id, currency, balance, bank_id)
 VALUES (5, 'SOM', 0, 2);

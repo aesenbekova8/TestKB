@@ -72,6 +72,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/api/kb/auth/**")
                 .permitAll()
+                .antMatchers("/",
+                        "/swagger-resources/**",
+                        "/swagger-ui.html")
+                .permitAll()
                 .anyRequest()
                 .authenticated()
                 .and().logout().logoutUrl("/api/kb/logout").disable();

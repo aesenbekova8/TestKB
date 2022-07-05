@@ -12,6 +12,7 @@ import com.example.testkb.entity.Bank;
 import com.example.testkb.entity.Transfer;
 import com.example.testkb.entity.User;
 import com.example.testkb.entity.enums.TransferStatus;
+import com.example.testkb.helper.CurrencyExchangeHelper;
 import com.example.testkb.mapper.TransferMapper;
 import com.example.testkb.service.*;
 import lombok.NonNull;
@@ -29,6 +30,7 @@ public class TransferEndpointImpl implements TransferEndpoint {
     private final AccountService accountService;
     private final UserService userService;
     private final TransferMapper transferMapper;
+    private final CurrencyExchangeHelper currencyExchangeHelper;
 
     private final BigDecimal commission = new BigDecimal("0.01");
 
@@ -37,13 +39,15 @@ public class TransferEndpointImpl implements TransferEndpoint {
                                 TransactionService transactionService,
                                 AccountService accountService,
                                 UserService userService,
-                                TransferMapper transferMapper) {
+                                TransferMapper transferMapper,
+                                CurrencyExchangeHelper currencyExchangeHelper) {
         this.bankService = bankService;
         this.transferService = transferService;
         this.transactionService = transactionService;
         this.accountService = accountService;
         this.userService = userService;
         this.transferMapper = transferMapper;
+        this.currencyExchangeHelper = currencyExchangeHelper;
     }
 
     @Override
@@ -86,8 +90,10 @@ public class TransferEndpointImpl implements TransferEndpoint {
         User cashier = userService.getById(currentUser.getId());
         Bank bank = bankService.getById(cashier.getBank().getId());
         TransferReport report = new TransferReport();
-        report.setProfit(transferService.getTotalSumOfCommissions(bank));
-        report.setTransfer(transferService.getTotalSumOfTransfers(bank));
+        report.setProfits(transferService.getTotalSumOfCommissions(bank));
+        report.setTransfers(transferService.getTotalSumOfTransfers(bank));
+        BigDecimal totalInSOM = currencyExchangeHelper.convertToSOM(report.getProfits());
+        report.setTotalProfitInSOM(totalInSOM);
 
         return report;
     }
