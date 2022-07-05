@@ -9,9 +9,9 @@ import java.util.Map;
 
 @Component
 public class CurrencyExchangeHelper {
-    private final BigDecimal SOM_TO_RUB = new BigDecimal("1.44");
-    private final BigDecimal SOM_TO_EUR = new BigDecimal("82.96");
-    private final BigDecimal SOM_TO_USD = new BigDecimal("79.50");
+    public static final BigDecimal SOM_TO_RUB = new BigDecimal("1.44");
+    public static final BigDecimal SOM_TO_EUR = new BigDecimal("82.96");
+    public static final BigDecimal SOM_TO_USD = new BigDecimal("79.50");
 
     public BigDecimal convertToSOM(@NonNull Map<Currency, BigDecimal> profits) {
         BigDecimal result = BigDecimal.ZERO;
@@ -21,8 +21,8 @@ public class CurrencyExchangeHelper {
         return result;
     }
 
-    private BigDecimal converter(@NonNull Currency currency,
-                                 @NonNull BigDecimal sum) {
+    public BigDecimal converter(@NonNull Currency currency,
+                                @NonNull BigDecimal sum) {
         switch (currency) {
             case SOM: return sum;
             case RUB: return sum.multiply(SOM_TO_RUB);
