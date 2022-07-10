@@ -28,4 +28,5 @@ public class AccountController {
     public ResponseEntity<List<AccountResponse>> getAllByBank(@PathVariable Long bankId) {
         return ResponseEntity.ok(accountEndpoint.getAllByBank(bankId));
     }
+
 }
