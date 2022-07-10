@@ -19,11 +19,11 @@ public class Swagger2Config {
     public static final String AUTHORIZATION_HEADER = "Authorization";
 
     private ApiInfo apiInfo() {
-        return new ApiInfo("My REST API",
-                "Some custom description of API.",
+        return new ApiInfo("KB",
+                "KB API",
                 "1.0",
                 "Terms of service",
-                new Contact("Sallo Szrajbman", "www.baeldung.com", "salloszraj@gmail.com"),
+                new Contact("Admin", "http://localhost:8080/swagger-ui/index.html", "some-email@gmail.com"),
                 "License of API",
                 "API license URL",
                 Collections.emptyList());
@@ -32,9 +32,9 @@ public class Swagger2Config {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
+                .securityContexts(List.of(securityContext()))
+                .securitySchemes(List.of(apiKey()))
                 .apiInfo(apiInfo())
-                .securityContexts(Arrays.asList(securityContext()))
-                .securitySchemes(Arrays.asList(apiKey()))
                 .select()
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
@@ -56,7 +56,7 @@ public class Swagger2Config {
                 = new AuthorizationScope("global", "accessEverything");
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
         authorizationScopes[0] = authorizationScope;
-        return Arrays.asList(new SecurityReference("JWT", authorizationScopes));
+        return List.of(new SecurityReference("JWT", authorizationScopes));
     }
 }
 

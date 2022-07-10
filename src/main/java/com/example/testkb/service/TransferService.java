@@ -8,6 +8,7 @@ import com.example.testkb.entity.enums.Currency;
 import com.example.testkb.entity.enums.TransferStatus;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 public interface TransferService {
@@ -16,4 +17,5 @@ public interface TransferService {
     Transfer getActive(TransferStatus status, String code, String receiverINN);
     Map<Currency, BigDecimal> getTotalSumOfCommissions(Bank bank);
     Map<Currency, BigDecimal> getTotalSumOfTransfers(Bank bank);
+    List<Transfer> getAllByStatusAndByReceiverBankId(TransferStatus status, Long bankId);
 }

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Repository
 public interface TransferRepository extends JpaRepository<Transfer, Long> {
@@ -19,4 +20,6 @@ public interface TransferRepository extends JpaRepository<Transfer, Long> {
 
     @Query(value = "select sum(tr.sum) as sum from Transfer as tr where tr.currency = :currency and tr.receiverBank = :bank")
     BigDecimal getTotalSumOfTransfersByCurrencyAndBank(Currency currency, Bank bank);
+
+    List<Transfer> findAllByStatusAndReceiverBankId(TransferStatus status, Long receiverBankId);
 }

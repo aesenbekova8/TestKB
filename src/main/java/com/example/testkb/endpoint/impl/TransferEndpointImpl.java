@@ -4,6 +4,7 @@ import com.example.testkb.config.security.CurrentUser;
 import com.example.testkb.config.security.UserPrincipal;
 import com.example.testkb.dto.request.TransferGetRequest;
 import com.example.testkb.dto.request.TransferMoneyRequest;
+import com.example.testkb.dto.response.CashOutTransferResponse;
 import com.example.testkb.dto.response.TransferReport;
 import com.example.testkb.dto.response.TransferResponse;
 import com.example.testkb.endpoint.TransferEndpoint;
@@ -16,11 +17,15 @@ import com.example.testkb.helper.CurrencyExchangeHelper;
 import com.example.testkb.mapper.TransferMapper;
 import com.example.testkb.service.*;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class TransferEndpointImpl implements TransferEndpoint {
 
@@ -70,8 +75,8 @@ public class TransferEndpointImpl implements TransferEndpoint {
 
     @Override
     @Transactional
-    public TransferResponse getTransfer(@NonNull TransferGetRequest request,
-                                        @CurrentUser UserPrincipal currentUser) {
+    public CashOutTransferResponse getTransfer(@NonNull TransferGetRequest request,
+                                               @CurrentUser UserPrincipal currentUser) {
         Transfer transfer = transferService.getActive(TransferStatus.NOT_CASHED, request.getTransferCode(), request.getReceiverINN());
         Bank bank = transfer.getReceiverBank();
         Account account = accountService.getByBankAndCurrency(bank, transfer.getCurrency());
@@ -82,7 +87,7 @@ public class TransferEndpointImpl implements TransferEndpoint {
         transferService.save(transfer);
         transactionService.cashOutTransfer(account, startAccountBalance, transfer.getSum());
 
-        return transferMapper.toTransferResponse(transfer);
+        return transferMapper.toCashOutTransferResponse(transfer);
     }
 
     @Override
@@ -96,6 +101,14 @@ public class TransferEndpointImpl implements TransferEndpoint {
         report.setTotalProfitInSOM(totalInSOM);
 
         return report;
+    }
+
+    @Override
+    public List<TransferResponse> getAllActiveByReceiverBank(@NonNull Long receiverBankId) {
+
+        return transferService.getAllByStatusAndByReceiverBankId(TransferStatus.NOT_CASHED, receiverBankId).stream()
+                .map(transferMapper::toTransferResponse)
+                .collect(Collectors.toList());
     }
 
     private BigDecimal calculateCommission(BigDecimal sum) {

@@ -84,4 +84,10 @@ public class TransferServiceImpl implements TransferService {
                 });
         return result;
     }
+
+    @Override
+    public List<Transfer> getAllByStatusAndByReceiverBankId(@NonNull TransferStatus status,
+                                                            @NonNull Long bankId) {
+        return transferRepository.findAllByStatusAndReceiverBankId(status, bankId);
+    }
 }

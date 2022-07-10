@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static java.lang.String.format;
@@ -77,5 +78,10 @@ public class UserServiceImpl implements UserService {
                                 format("User: %s, not found", username)
                         )
                 );
+    }
+
+    @Override
+    public List<User> getAllCashiersByBankId(@NonNull Long bankId) {
+        return userRepository.findAllByBankId(bankId);
     }
 }

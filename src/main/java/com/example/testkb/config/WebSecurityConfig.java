@@ -72,9 +72,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/api/kb/auth/**")
                 .permitAll()
-                .antMatchers("/",
+                .antMatchers(
+                        "/",
+                        "/favicon.ico",
+                        "/**/*.png",
+                        "/**/*.gif",
+                        "/**/*.svg",
+                        "/**/*.jpg",
+                        "/**/*.html",
+                        "/**/*.css",
+                        "/**/*.js",
                         "/swagger-resources/**",
-                        "/swagger-ui.html")
+                        "/swagger-ui/index.html",
+                        "/v2/api-docs",
+                        "/webjars/**"
+                )
                 .permitAll()
                 .anyRequest()
                 .authenticated()

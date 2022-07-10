@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -59,5 +60,10 @@ public class AccountServiceImpl implements AccountService {
                                         @NonNull Currency currency) {
         return Optional.of(accountRepository.findAccountByBankAndCurrency(bank, currency))
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Account with bankId: %s and currency: %s not found", bank, currency)));
+    }
+
+    @Override
+    public List<Account> getAllByBank(@NonNull Bank bank) {
+        return accountRepository.findAllByBank(bank);
     }
 }

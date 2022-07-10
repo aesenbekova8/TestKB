@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -50,5 +51,11 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setCreatedDateTime(LocalDateTime.now());
 
         return transactionRepository.save(transaction);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Transaction> getAllByAccount(@NonNull Account account) {
+        return transactionRepository.findAllByAccount(account);
     }
 }

@@ -8,9 +8,12 @@ import com.example.testkb.entity.Bank;
 import com.example.testkb.entity.Role;
 import com.example.testkb.entity.User;
 
+import java.util.List;
+
 public interface UserService {
     User create(UserCreateRequest request, Bank bank, String encodedPassword, Role role);
     User changePassword(PasswordUpdateRequest request, @CurrentUser UserPrincipal currentUser);
     User getById(Long id);
     User getByUsername(String username);
+    List<User> getAllCashiersByBankId(Long bankId);
 }
